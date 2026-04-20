@@ -1,0 +1,584 @@
+
+FAST NATIONAL UNIVERSITY OF COMPUTER & EMERGING SCIENCESCS-4063: Natural Language ProcessingAssignment 2 — Neural NLP PipelineA Continuation of the BBC Urdu NLP PipelineTotal Marks: 75Due Date: 8 April 2026, 11:59 PMFramework: PyTorch (from scratch)Prerequisite: Assignment 1 completeFAST NATIONAL UNIVERSITY OF COMPUTER & EMERGING SCIENCESCS-4063: Natural Language ProcessingAssignment 2 — Neural NLP PipelineA Continuation of the BBC Urdu NLP PipelineTotal Marks: 75Due Date: 8 April 2026, 11:59 PMFramework: PyTorch (from scratch)Prerequisite: Assignment 1 complete
+FAST NATIONAL UNIVERSITY OF COMPUTER & EMERGING SCIENCES
+CS-4063: Natural Language Processing
+Assignment 2 — Neural NLP Pipeline
+A Continuation of the BBC Urdu NLP Pipeline
+Total Marks: 75
+Due Date: 8 April 2026, 11:59 PM
+Framework: PyTorch (from scratch)
+Prerequisite: Assignment 1 complete
+FAST NATIONAL UNIVERSITY OF COMPUTER & EMERGING SCIENCES
+CS-4063: Natural Language Processing
+Assignment 2 — Neural NLP Pipeline
+A Continuation of the BBC Urdu NLP Pipeline
+Total Marks: 75
+Due Date: 8 April 2026, 11:59 PM
+Framework: PyTorch (from scratch)
+Prerequisite: Assignment 1 complete
+Restrictions — Read Before You StartNo pretrained models, no Gensim, no HuggingFace. Everything must be implemented from scratch in PyTorch. The following built-ins are not allowed: nn.Transformer, nn.MultiheadAttention,   nn.TransformerEncoder.Restrictions — Read Before You StartNo pretrained models, no Gensim, no HuggingFace. Everything must be implemented from scratch in PyTorch. The following built-ins are not allowed: nn.Transformer, nn.MultiheadAttention,   nn.TransformerEncoder.
+Restrictions — Read Before You Start
+No pretrained models, no Gensim, no HuggingFace. Everything must be implemented from scratch in PyTorch. The following built-ins are not allowed: nn.Transformer, nn.MultiheadAttention,   nn.TransformerEncoder.
+Restrictions — Read Before You Start
+No pretrained models, no Gensim, no HuggingFace. Everything must be implemented from scratch in PyTorch. The following built-ins are not allowed: nn.Transformer, nn.MultiheadAttention,   nn.TransformerEncoder.
+Required Input Files:
+
+ File
+ Used In
+ Purpose
+cleaned.txt
+All parts
+Primary training corpus
+ raw.txt
+ Parts 1 & 2 
+ Ablation baseline
+Metadata.json
+Part 3
+Topic labels for classification
+
+
+Part 1Word Embeddings[25 Marks]Part 1Word Embeddings[25 Marks]
+Part 1
+Word Embeddings
+[25 Marks]
+Part 1
+Word Embeddings
+[25 Marks]
+
+TF-IDF and PMI Weighted Representations
+
+TF-IDF Weighting[4 marks]
+Build a term–document matrix from cleaned.txt. Restrict vocabulary to the 10,000 most frequent tokens; all others map to <UNK>.
+× × Compute TF-IDF weights using the standard formula:
+× 
+× 
+TF-IDF(w, d) = TF(w, d)log N
+1 + df(w)
+where N is the total number of documents and df(w) is the document frequency of word
+w.
+Save the resulting weighted matrix as tfidf_matrix.npy.
+Identify and report the top-10 most discriminative words per topic category using TF-IDF scores.
+Pointwise Mutual Information (PMI)[5 marks]
+Build a word–word co-occurrence matrix from cleaned.txt with a symmetric context window of size k = 5.
+12 2 12 2 Apply Positive PMI (PPMI) weighting to the co-occurrence matrix:
+12 2 
+12 2 
+PPMI(w , w ) = max 0, log  P(w1, w2) 
+P(w1) P(w2)
+Save the PPMI-weighted matrix as ppmi_matrix.npy.
+Produce a 2-D t-SNE visualisation of the 200 most frequent tokens, colour-coded by semantic category (e.g. politics, sports, geography). Include a legend.
+Report the top-5 nearest neighbours by cosine similarity for at least 10 query words.
+
+Skip-gram Word2Vec
+
+Implementation[9 marks]
+Train a Skip-gram Word2Vec model on cleaned.txt. The model must:
+Maintain separate centre and context embedding matrices, V and U , both of dimension
+|V | × d.
+Use a noise distribution Pn(w) ∝ f (w)3/4 for K = 10 noise samples per positive pair.
+Optimise the binary cross-entropy loss over a context window of size k = 5:
+K
+−−−−−−L =log σ (uo⊤vc)∑ log σ ( uw⊤k vc)
+−−−
+−−−
+k=1
+Train for at least 5 epochs with batch size ≥ 512.
+Report training loss at regular intervals with a plotted loss curve.
+22Save the averaged final embeddings 1 (V + U ) as embeddings_w2v.npy.
+2
+2
+
+
+Required Hyperparametersd = 100,k = 5,K = 10,η = 0.001 (Adam)Required Hyperparametersd = 100,k = 5,K = 10,η = 0.001 (Adam)
+Required Hyperparameters
+d = 100,k = 5,K = 10,η = 0.001 (Adam)
+Required Hyperparameters
+d = 100,k = 5,K = 10,η = 0.001 (Adam)
+Evaluation[7 marks]
+Nearest Neighbours and Analogy[4 marks]
+Report the top-10 nearest neighbours for each of the following query words:
+Pakistan, Hukumat, Adalat, Maeeshat, Fauj, Sehat, Taleem, Aabadi.
+——Construct 10 analogy tests of the form a : b :: c :? using the vector arithmetic v(b) v(a) + v(c). Report top-3 candidates per test. At least 5 must be correct.
+—
+—
+In 2–3 sentences, assess whether the embeddings capture meaningful semantic relation- ships.
+Four-Condition Comparison[3 marks]
+Train and evaluate under all four conditions below. For each, report the top-5 neighbours for 5 query words and MRR on 20 manually labelled word pairs. Discuss which condition yields the best embeddings and whether increasing d helps.
+
+
+
+
+ID
+Condition
+Description
+C1
+PPMI baseline
+PPMI-weighted co-occurrence vectors
+C2
+Skip-gram on raw.txt
+Word2Vec trained on the unprocessed corpus
+C3
+Skip-gram on cleaned.txt
+Word2Vec trained on the cleaned corpus
+C4
+Skip-gram, d = 200
+Condition C3 with doubled embedding dimension
+
+
+
+
+
+Part 2Sequence Labeling: POS Tagging & NER[25 Marks]Part 2Sequence Labeling: POS Tagging & NER[25 Marks]
+Part 2
+Sequence Labeling: POS Tagging & NER
+[25 Marks]
+Part 2
+Sequence Labeling: POS Tagging & NER
+[25 Marks]
+
+Dataset Preparation[5 marks]
+
+Randomly select 500 sentences from cleaned.txt, ensuring at least 100 sentences from each of 3 distinct topic categories in Metadata.json.
+POS annotation. Assign one of the 12 tags below to every token. Use a rule-based tagger built on the stemmer/lemmatizer from Assignment 1, supported by a hand-crafted lexicon of at least 200 entries per major category.
+NOUNVERBADJADVPRONDETCONJPOSTNUMPUNCUNK
+NER annotation. Annotate every token using the BIO scheme below. A seed gazetteer must cover at least 50 Pakistani persons, 50 locations, and 30 organisations.
+B-PERI-PERB-LOCI-LOCB-ORGI-ORGB-MISCI-MISCO
+Split the annotated data 70/15/15 (train/val/test), stratified by topic. Report the class- label distribution for both tasks.
+
+BiLSTM Sequence Labeler[10 marks]
+
+Build a 2-layer bidirectional LSTM sequence labeler. The model must:
+Be initialised with the Word2Vec embeddings from Part 1 (condition C3), evaluated in both frozen and fine-tuned modes. Report validation F1 for each.
+Produce per-token contextual representations by concatenating forward and backward hidden states: ht = [→−h t  ←h−t ].
+Apply dropout of p = 0.5 between LSTM layers.
+For NER: decode using a CRF output layer with a learnable tag-transition matrix. Infer- ence must use the Viterbi algorithm.
+For POS: decode with a linear classifier and cross-entropy loss.
+Handle variable-length sequences correctly; padding positions must not contribute to the loss.
+Train with Adam (η = 10−3, weight decay 10−4) and early stopping on validation F1 with patience of 5 epochs. Plot training and validation loss per epoch.
+
+Evaluation[10 marks]
+
+POS Tagging[4 marks]
+Report token-level accuracy and macro-F1 on the test set.
+Present a confusion matrix over all 12 tags.
+Identify the 3 most confused tag pairs and provide at least 2 example sentences per pair.
+Compare frozen vs. fine-tuned embedding modes in a summary table.
+NER[4 marks]
+Report entity-level precision, recall, and F1 per type (PER, LOC, ORG, MISC) and over- all, evaluated with conlleval.
+Compare results with and without the CRF output layer.
+
+Provide an error analysis of 5 false positives and 5 false negatives, with explanations.
+Ablation Study[2 marks]
+Run each ablation independently on the same data split. Report numeric results and discuss each finding.
+
+
+
+
+ID
+Change
+What is being tested
+A1
+Unidirectional LSTM only
+Value of backward context for sequence labeling
+A2
+No dropout
+Effect of dropout regularisation
+A3
+Random embedding initialisation
+Contribution of pre-trained embeddings from
+Part 1
+A4
+Softmax output instead of CRF (NER)
+Whether structured decoding improves entity
+detection
+
+
+
+
+
+Part 3Transformer Encoder for Topic Classification[20 Marks]Part 3Transformer Encoder for Topic Classification[20 Marks]
+Part 3
+Transformer Encoder for Topic Classification
+[20 Marks]
+Part 3
+Transformer Encoder for Topic Classification
+[20 Marks]
+
+Dataset Preparation[2 marks]
+
+Assign each article from Metadata.json to one of the 5 categories below, guided by the listed keywords.
+
+
+
+
+#
+Category
+Indicative keywords
+1
+Politics
+election, government, minister, parliament
+2
+Sports
+cricket, match, team, player, score
+3
+Economy
+inflation, trade, bank, GDP, budget
+4
+International
+UN, treaty, foreign, bilateral, conflict
+5
+Health & Society
+hospital, disease, vaccine, flood, education
+Represent each article as a token-ID sequence from cleaned.txt, padded or truncated to 256 tokens.
+Split 70/15/15 stratified by category. Report the class distribution.
+
+Transformer Encoder[10 marks]
+
+Implement a Transformer encoder for 5-class topic classification. Each component listed below must be a separate, self-contained module. No PyTorch built-in Transformer classes may be used.
+Scaled dot-product attention that accepts an optional padding mask and returns both the output and the attention weights.
+
+
+Attention(Q, K,V ) = softmax
+QK⊤
+    √dkV
+  
+  
+
+Multi-head self-attention with h = 4 heads, dmodel = 128, and dk = dv = 32 per head, with separate projection matrices per head and a shared output projection.
+Position-wise feed-forward network: two linear layers with a ReLU activation, inner dimension dff = 512.
+Sinusoidal positional encoding stored as a fixed (non-learned) buffer and added to the input embeddings.
+PE(pos,2i) = sinpos i d  ,PE(pos,2i+1) = cospos i d 
+
+
+100002 /
+4 stacked encoder blocks, each using Pre-Layer Normalisation:
+x ← x + Dropout(MultiHead(LN(x)))
+x ← x + Dropout(FFN(LN(x)))
+100002 /
+
+Classification head: a learned [CLS] token prepended to every sequence; its output rep- resentation is passed through an MLP (128 → 64 → 5) for classification.
+
+
+Training Requirementsschedule with 50 warmup steps. Train for 20 epochs and plot training and validation loss and accuracy per epoch.Optimise with AdamW (η = 5 × 10−4, weight decay 0.01) and a cosine learning-rateTraining Requirementsschedule with 50 warmup steps. Train for 20 epochs and plot training and validation loss and accuracy per epoch.Optimise with AdamW (η = 5 × 10−4, weight decay 0.01) and a cosine learning-rate
+Training Requirements
+schedule with 50 warmup steps. Train for 20 epochs and plot training and validation loss and accuracy per epoch.
+Optimise with AdamW (η = 5 × 10−4, weight decay 0.01) and a cosine learning-rate
+Training Requirements
+schedule with 50 warmup steps. Train for 20 epochs and plot training and validation loss and accuracy per epoch.
+Optimise with AdamW (η = 5 × 10−4, weight decay 0.01) and a cosine learning-rate
+Evaluation[8 marks]
+
+Results[4 marks]
+Report test accuracy and macro-F1.
+Present a 5 × 5 confusion matrix.
+For 3 correctly classified articles, plot attention weight heatmaps from at least 2 heads of the final encoder layer.
+BiLSTM vs. Transformer Comparison[4 marks]
+Write 10–15 sentences in your notebook addressing all five questions below:
+Which model achieves higher accuracy, and by how much?
+Which model converged in fewer epochs?
+Which model was faster to train per epoch, and why?
+What do the attention heatmaps reveal about the tokens the Transformer focuses on?
+Given a dataset of only 200–300 articles, which architecture is more appropriate and why?
+
+
+GitHub SubmissionVersion Control Component[5 Marks]GitHub SubmissionVersion Control Component[5 Marks]
+GitHub Submission
+Version Control Component
+[5 Marks]
+GitHub Submission
+Version Control Component
+[5 Marks]
+All code must be in a public GitHub repository before the deadline. Include the repository URL in both your report and your notebook.
+
+Repository name: i23-XXXX-NLP-Assignment2
+Folder structure must mirror the zip submission layout.
+Commit history must reflect incremental progress — a single bulk commit receives zero.
+Include a README.md with instructions to reproduce each part.
+
+GitHub URL:
+Meaningful commit history (≥ 5 commits)README.md with reproduction instructions11All code committed (notebook + scripts)2Meaningful commit history (≥ 5 commits)README.md with reproduction instructions11All code committed (notebook + scripts)2CriteriaMarksCriteriaMarksPublic repository with correct name and folder structure1
+Meaningful commit history (≥ 5 commits)
+README.md with reproduction instructions
+1
+1
+All code committed (notebook + scripts)2
+Meaningful commit history (≥ 5 commits)
+README.md with reproduction instructions
+1
+1
+All code committed (notebook + scripts)2
+CriteriaMarks
+CriteriaMarks
+Total5
+
+
+
+Grading RubricMark Breakdown[75 Marks]Grading RubricMark Breakdown[75 Marks]
+Grading Rubric
+Mark Breakdown
+[75 Marks]
+Grading Rubric
+Mark Breakdown
+[75 Marks]
+ReminderAny notebook cell with no output receives zero. All figures must include axis labels and a title.ReminderAny notebook cell with no output receives zero. All figures must include axis labels and a title.
+Reminder
+Any notebook cell with no output receives zero. All figures must include axis labels and a title.
+Reminder
+Any notebook cell with no output receives zero. All figures must include axis labels and a title.
+
+Part 1 — Word Embeddings[25 marks]
+ComponentMarksKey CriteriaComponentMarksKey Criteria
+ComponentMarksKey Criteria
+ComponentMarksKey Criteria
+
+
+
+
+Term–document matrix construction
+Correct frequency counts; vocabulary capped at 10K
+
+TF-IDFweighting+ saved matrix2Correct IDF formula; top-10 words per category reportedTF-IDFweighting+ saved matrix2Correct IDF formula; top-10 words per category reported
+TF-IDFweighting+ saved matrix
+2
+Correct IDF formula; top-10 words per category reported
+TF-IDFweighting+ saved matrix
+2
+Correct IDF formula; top-10 words per category reported
+
+PPMIco-occurrence
+matrix
+Context window k = 5; PPMI formula correctly applied
+
+
+
+
+t-SNE plot + nearest neighbours2Labelled; colour-coded; 10 query words reportedt-SNE plot + nearest neighbours2Labelled; colour-coded; 10 query words reported22Vocabulary, noise table, training pairs
+t-SNE plot + nearest neighbours
+2
+Labelled; colour-coded; 10 query words reported
+t-SNE plot + nearest neighbours
+2
+Labelled; colour-coded; 10 query words reported
+2
+2
+f (w)3/4 distribution; correct skip-gram pairs
+
+
+
+Skip-gram model with BCE loss3Two embedding matrices; correct loss formulationSkip-gram model with BCE loss3Two embedding matrices; correct loss formulationTraining with loss curve + saved embed- dings
+Skip-gram model with BCE loss
+3
+Two embedding matrices; correct loss formulation
+Skip-gram model with BCE loss
+3
+Two embedding matrices; correct loss formulation
+Loss plotted; 1 (V +U ) saved
+
+Nearest-neighbour and analogy evaluation4≥ 5 correct analogies; 10 query words reportedNearest-neighbour and analogy evaluation4≥ 5 correct analogies; 10 query words reported
+Nearest-neighbour and analogy evaluation
+4
+≥ 5 correct analogies; 10 query words reported
+Nearest-neighbour and analogy evaluation
+4
+≥ 5 correct analogies; 10 query words reported
+
+Four-condition compar-
+ison with MRR
+All 4 conditions run; MRR computed; discussion present
+
+Written analysis of em- bedding quality0Assessed holistically alongside condition comparisonWritten analysis of em- bedding quality0Assessed holistically alongside condition comparison
+Written analysis of em- bedding quality
+0
+Assessed holistically alongside condition comparison
+Written analysis of em- bedding quality
+0
+Assessed holistically alongside condition comparison
+Total25—
+
+
+Part 2 — BiLSTM Sequence Labeling[25 marks]
+
+
+
+
+ComponentMarksKey CriteriaComponentMarksKey Criteria
+ComponentMarksKey Criteria
+ComponentMarksKey Criteria
+
+POS and NER annotation5500 sentences; rule-based tagger; gazetteer
+Embedding initialisation, frozen and fine-tuned2Both modes evaluated and comparedEmbedding initialisation, frozen and fine-tuned2Both modes evaluated and compared
+Embedding initialisation, frozen and fine-tuned
+2
+Both modes evaluated and compared
+Embedding initialisation, frozen and fine-tuned
+2
+Both modes evaluated and compared
+
+2-layerbidirectionalLSTMwith
+dropout
+Bidirectional; 2 layers; dropout applied
+
+
+CRF + Viterbi decoding (NER)2Learnable transitions; Viterbi inferenceCRF + Viterbi decoding (NER)2Learnable transitions; Viterbi inference
+CRF + Viterbi decoding (NER)2Learnable transitions; Viterbi inference
+CRF + Viterbi decoding (NER)2Learnable transitions; Viterbi inference
+Variable-length sequence handling1Padding excluded from loss
+
+
+POS metrics, confusion matrix, error analysis4Accuracy; F1; 3 confused pairs analysedPOS metrics, confusion matrix, error analysis4Accuracy; F1; 3 confused pairs analysedNER metrics, CRF comparison, error analysis
+POS metrics, confusion matrix, error analysis
+4
+Accuracy; F1; 3 confused pairs analysed
+POS metrics, confusion matrix, error analysis
+4
+Accuracy; F1; 3 confused pairs analysed
+conlleval scores; with/without CRF
+
+Ablation A1–A4 with discussion2All 4 ablations run and discussedAblation A1–A4 with discussion2All 4 ablations run and discussed
+Ablation A1–A4 with discussion2All 4 ablations run and discussed
+Ablation A1–A4 with discussion2All 4 ablations run and discussed
+Training curves + early stopping2Val F1 monitored; curves plotted
+Total25—
+
+
+Part 3 — Transformer Encoder[20 marks]
+ComponentMarksKey CriteriaComponentMarksKey Criteria
+ComponentMarksKey Criteria
+ComponentMarksKey Criteria
+
+
+
+Scaled dot-product attention module1Mask supported; weights returnedScaled dot-product attention module1Mask supported; weights returned5-class labelled dataset, stratified split2Distribution reported
+Scaled dot-product attention module1Mask supported; weights returned
+Scaled dot-product attention module1Mask supported; weights returned
+Multi-head self-attention (4 heads)2Independent projections per head
+Position-wise FFN1Correct dimensions; ReLU; dropoutPosition-wise FFN1Correct dimensions; ReLU; dropoutSinusoidal PE as fixed buffer1Non-learned; added before first block Pre-LN encoder block, stacked ×42Pre-LN residual connections; 4 blocks
+Position-wise FFN1Correct dimensions; ReLU; dropout
+Position-wise FFN1Correct dimensions; ReLU; dropout
+Attention heatmaps (≥ 2 heads, 3 articles)Written BiLSTM vs. Transformer compar- ison24Token labels readableAll 5 questions addressedAccuracy, F1, confusion matrix2All three reportedAttention heatmaps (≥ 2 heads, 3 articles)Written BiLSTM vs. Transformer compar- ison24Token labels readableAll 5 questions addressedAccuracy, F1, confusion matrix2All three reportedCLS token + AdamW + cosine LR + train-3All four present and correct ing curves
+Attention heatmaps (≥ 2 heads, 3 articles)
+Written BiLSTM vs. Transformer compar- ison
+2
+4
+Token labels readable
+All 5 questions addressed
+Accuracy, F1, confusion matrix2All three reported
+Attention heatmaps (≥ 2 heads, 3 articles)
+Written BiLSTM vs. Transformer compar- ison
+2
+4
+Token labels readable
+All 5 questions addressed
+Accuracy, F1, confusion matrix2All three reported
+Total20—
+
+
+GitHub Submission[5 marks]
+ComponentMarksKey CriteriaComponentMarksKey Criteria
+ComponentMarksKey Criteria
+ComponentMarksKey Criteria
+
+
+
+Meaningful commit history (≥ 5 commits)README.md with reproduction instructions11No single bulk commit Clear setup and run stepsAll code committed (notebook + scripts)2Runnable from README.mdMeaningful commit history (≥ 5 commits)README.md with reproduction instructions11No single bulk commit Clear setup and run stepsAll code committed (notebook + scripts)2Runnable from README.mdPublic repository, correct name and structure1Matches submission layout
+Meaningful commit history (≥ 5 commits)
+README.md with reproduction instructions
+1
+1
+No single bulk commit Clear setup and run steps
+All code committed (notebook + scripts)2Runnable from README.md
+Meaningful commit history (≥ 5 commits)
+README.md with reproduction instructions
+1
+1
+No single bulk commit Clear setup and run steps
+All code committed (notebook + scripts)2Runnable from README.md
+Total5—
+Grand Total75—Grand Total75—
+Grand Total75—
+Grand Total75—
+
+
+
+
+
+Submission GuidelinesDeliverables[—]Submission GuidelinesDeliverables[—]
+Submission Guidelines
+Deliverables
+[—]
+Submission Guidelines
+Deliverables
+[—]
+Zip file name: i23-XXXX_Assignment2_DS-X.zip
+i23 - XXXX_Assignment2 _DS -X/|-- i23 - XXXX_Assignment2 _DS - X. ipynb|-- report. pdf Roman 12 pt)( all cells executed )(2 -3 pages , Times New|--|||||--|||‘--embeddings/|--|--|-- ‘--tfidf_matrix. npyppmi_matrix. npy embeddings_w 2 v . npy word 2 idx. jsonmodels/|-- bilstm_pos. pt|-- bilstm_ner. pt‘-- transformer_cls. pt data/|-- pos_train . conll|-- pos_test. conll|-- ner_train . conll ‘-- ner_test. conlli23 - XXXX_Assignment2 _DS -X/|-- i23 - XXXX_Assignment2 _DS - X. ipynb|-- report. pdf Roman 12 pt)( all cells executed )(2 -3 pages , Times New|--|||||--|||‘--embeddings/|--|--|-- ‘--tfidf_matrix. npyppmi_matrix. npy embeddings_w 2 v . npy word 2 idx. jsonmodels/|-- bilstm_pos. pt|-- bilstm_ner. pt‘-- transformer_cls. pt data/|-- pos_train . conll|-- pos_test. conll|-- ner_train . conll ‘-- ner_test. conllReport FormatPDF only. Times New Roman, 12pt, 1.5 line spacing, 2–3 pages. Sections: Overview, Part 1 Results, Part 2 Results, Part 3 Results, Conclusion.No .md, .docx, or any other format will be accepted.Report FormatPDF only. Times New Roman, 12pt, 1.5 line spacing, 2–3 pages. Sections: Overview, Part 1 Results, Part 2 Results, Part 3 Results, Conclusion.No .md, .docx, or any other format will be accepted.
+i23 - XXXX_Assignment2 _DS -X/
+|-- i23 - XXXX_Assignment2 _DS - X. ipynb
+|-- report. pdf Roman 12 pt)
+( all cells executed )
+(2 -3 pages , Times New
+|--
+|
+|
+|
+|
+|--
+|
+|
+|
+‘--
+embeddings/
+|--
+|--
+|-- ‘--
+tfidf_matrix. npy
+ppmi_matrix. npy embeddings_w 2 v . npy word 2 idx. json
+models/
+|-- bilstm_pos. pt
+|-- bilstm_ner. pt
+‘-- transformer_cls. pt data/
+|-- pos_train . conll
+|-- pos_test. conll
+|-- ner_train . conll ‘-- ner_test. conll
+i23 - XXXX_Assignment2 _DS -X/
+|-- i23 - XXXX_Assignment2 _DS - X. ipynb
+|-- report. pdf Roman 12 pt)
+( all cells executed )
+(2 -3 pages , Times New
+|--
+|
+|
+|
+|
+|--
+|
+|
+|
+‘--
+embeddings/
+|--
+|--
+|-- ‘--
+tfidf_matrix. npy
+ppmi_matrix. npy embeddings_w 2 v . npy word 2 idx. json
+models/
+|-- bilstm_pos. pt
+|-- bilstm_ner. pt
+‘-- transformer_cls. pt data/
+|-- pos_train . conll
+|-- pos_test. conll
+|-- ner_train . conll ‘-- ner_test. conll
+Report Format
+PDF only. Times New Roman, 12pt, 1.5 line spacing, 2–3 pages. Sections: Overview, Part 1 Results, Part 2 Results, Part 3 Results, Conclusion.
+No .md, .docx, or any other format will be accepted.
+Report Format
+PDF only. Times New Roman, 12pt, 1.5 line spacing, 2–3 pages. Sections: Overview, Part 1 Results, Part 2 Results, Part 3 Results, Conclusion.
+No .md, .docx, or any other format will be accepted.
+
+
+
+
+
+
+— Good Luck —— Good Luck —
+— Good Luck —
+— Good Luck —
